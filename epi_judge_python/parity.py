@@ -4,22 +4,23 @@ from test_framework import generic_test
 def byte_parity(b: int) -> int:
     c = 0
     while b > 0:
-        c ^= 1 & b
-        b >>= 1
+        c ^= 1
+        b &= b - 1
     return c
 
 
-cache = {}
+cache = []
+for i in range(0, 2 ** 16 - 1):
+    cache.append(byte_parity(i))
 
 
 def parity(x: int) -> int:
     c = 0
-    for _ in range(8):
-        n = x & 255
-        if n not in cache:
-            cache[n] = byte_parity(n)
+    m = 2 ** 16 - 1
+    for _ in range(4):
+        n = x & m
         c ^= cache[n] & 1
-        x >>= 8
+        x >>= 16
     return c
 
 
